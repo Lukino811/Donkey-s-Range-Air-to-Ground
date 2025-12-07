@@ -36,7 +36,7 @@ local RangeFSM = RangeFSM_Module.init(RangeConfig, RangeState, RangePilots, Rang
 
 -- Inject FSM reference back to modules that need it
 RangeTimers.setFSM(RangeFSM)
-RangeMenu.setFSM(RangeFSM)
+RangeMenu.setFSM(RangeFSM, RangeFSM_Module.CheckAutoHot)
 
 -- Export global references for compatibility
 RANGE = RangeConfig.RANGE

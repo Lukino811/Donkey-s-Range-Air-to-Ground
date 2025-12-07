@@ -13,6 +13,7 @@ local RangePilots = nil
 local RangeMessages = nil
 local RangeStack = nil
 local RangeFSM = nil
+local CheckAutoHot = nil
 
 function RangeMenu.init(config, state, zones, pilots, messages, stack)
     RANGE = config.RANGE
@@ -23,9 +24,10 @@ function RangeMenu.init(config, state, zones, pilots, messages, stack)
     RangeStack = stack
 end
 
--- Inject FSM reference after FSM module is created
-function RangeMenu.setFSM(fsm)
+-- Inject FSM reference and CheckAutoHot function after FSM module is created
+function RangeMenu.setFSM(fsm, checkAutoHotFunc)
     RangeFSM = fsm
+    CheckAutoHot = checkAutoHotFunc
 end
 
 -- Menu Handlers
@@ -190,9 +192,10 @@ function RangeMenu.MenuSelectModule(moduleType)
     -- V10: Config message broadcast
     MESSAGE:New(RANGE.Name .. ": " .. RANGE.Messages.CONFIG_MODULE.text .. " " .. moduleType, 10):ToAll()
     
-    -- Import CheckAutoHot from FSM module
-    local RangeFSM_Module = require("modules.range_fsm")
-    RangeFSM_Module.CheckAutoHot()
+    -- Call CheckAutoHot
+    if CheckAutoHot then
+        CheckAutoHot()
+    end
 end
 
 function RangeMenu.MenuSelectDefense(defenseLevel)
@@ -213,9 +216,10 @@ function RangeMenu.MenuSelectDefense(defenseLevel)
     -- V10: Config message broadcast
     MESSAGE:New(RANGE.Name .. ": " .. RANGE.Messages.CONFIG_DEFENSE.text .. " " .. defenseLevel, 10):ToAll()
     
-    -- Import CheckAutoHot from FSM module
-    local RangeFSM_Module = require("modules.range_fsm")
-    RangeFSM_Module.CheckAutoHot()
+    -- Call CheckAutoHot
+    if CheckAutoHot then
+        CheckAutoHot()
+    end
 end
 
 function RangeMenu.MenuSetGreen()
